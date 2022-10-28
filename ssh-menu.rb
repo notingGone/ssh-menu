@@ -4,13 +4,13 @@ require 'curses'
 include Curses
 
 def config_app
-  @index = 0 
-  ssh_file = '~/.ssh/config'
+  @config_index = 0
+  ssh_file = '~/.ssh/config.bak'
   hosts = read_ssh(ssh_file)
   { ssh_file: ssh_file,
     hosts:  hosts,
     max_index: hosts.size - 1,
-    min_index: 0 } 
+    min_index: 0 }
 end
 
 def read_ssh(path_to_file)
@@ -36,14 +36,14 @@ def draw_screen(window, settings)
   hosts = settings[:hosts]
   window.setpos(0,0)
   hosts.each.with_index(0) do |str, index|
-    if index == @index
+    if index == @config_index
       window.attron(color_pair(1)) { window << str }
     else
-      window << str 
-    end 
+      window << str
+    end
     clrtoeol
     window << "\n"
-  end 
+  end
   clear_screen_and_refresh(window)
 end
 
@@ -54,11 +54,11 @@ def handle_input(window, settings)
   str =  window.getch.to_s
   case str
   when 'j'
-    @index = @index >= max_index ? max_index : @index + 1
+    @config_index = @config_index >= max_index ? max_index : @config_index + 1
   when 'k'
-    @index = @index <= min_index ? min_index : @index - 1
+    @config_index = @config_index <= min_index ? min_index : @config_index - 1
   when '10' # ENTER key
-    @selected = hosts[@index]
+    @selected = hosts[@config_index]
     exit 0
   when 'q' then exit 0
   end
