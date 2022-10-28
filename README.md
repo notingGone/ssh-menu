@@ -1,1 +1,1 @@
-# ssh-menu
+# ssh_connection_selector
